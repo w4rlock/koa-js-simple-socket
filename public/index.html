@@ -1,0 +1,16 @@
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+io = io.connect()
+
+// Send the ready event.
+io.emit('ready')
+io.emit('player:play');
+
+// Listen for the new visitor event.
+io.on('event', function(data) {
+    $('body').append('<p>New visitor, hooray! ' + new Date().toString() +'</p>')
+    $('body').append(data);
+
+})
+</script>
