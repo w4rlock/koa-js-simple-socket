@@ -3,7 +3,7 @@
 
 const	HOST = 'http://www.coverlib.com';
 var log = console.log
-	, utils = require('./utils')
+	, utils = require('./nutil')
 	, request = require('request')
 	, cheerio = require('cheerio')
   , temp = require('temp')
@@ -29,7 +29,7 @@ Crawl.getAllCovers = (artcover, cb) => {
 				return;
 			}
 
-			utils.unzip(file, cb);
+			utils.extractpkg(file, cb);
 
 		});
 
