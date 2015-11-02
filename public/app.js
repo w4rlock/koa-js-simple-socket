@@ -46,6 +46,7 @@ $('#file').change(function(e) {
 		if (perc == "100%"){
 			$("#loadingbar").hide();
 		}
+
 	});
 
 });
