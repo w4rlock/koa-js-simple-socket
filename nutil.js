@@ -32,7 +32,7 @@ Util.upload = (stream, data) => {
 
 
 Util.download = (url, out, cb) => {
-	log('wget downloading:: ',url);
+	log('wget downloading %s::%s ',url, out);
 
 	spawn('wget', [url, '-O', out]).on('exit', status => {
 		log('wget download status', status);
@@ -43,7 +43,7 @@ Util.download = (url, out, cb) => {
 			return;
 		}
 
-		cb('error downloading zip', null);
+		cb('error downloading', null);
 
 	});
 }
@@ -80,7 +80,7 @@ Util.extractpkg = (file, cb) => {
 		log('unzip status', status);
 
 		if (status == 0){
-			cb(null, zipfile);
+			cb(null, file);
 			return;
 		}
 

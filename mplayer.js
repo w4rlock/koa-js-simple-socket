@@ -2,13 +2,18 @@
 
 const PLAYER = 'mpc';
 const AMIXER = 'amixer';
+const MDIR = '/server/media/music/';
 
 var spawn = require('child_process').spawn;
+var path = require('path');
+var crawl = require('./crawlcover.js');
+var fs = require('fs');
 var MPlayer = {};
 var Volumen = {};
 var Playlists = {};
-var _socket = {};
+var log = console.log;
 var _currentPlay = null;
+var _socket = {};
 
 var _listeners = {
 	volumen: Volumen,
@@ -34,7 +39,7 @@ Playlists.current = () => playlist_get();
  * socket - listening mplayer methods.
  *
  */
-module.exports = exports = socket => {
+module.exports = exports = (socket) => {
 	_socket = socket;
 
 	for (let obj in _listeners){
@@ -43,10 +48,12 @@ module.exports = exports = socket => {
 			let skey = obj +':'+ method;
 
 			socket.on(skey, _listeners[obj][method]);
-			console.log(skey);
+			log(skey);
 
 		}
 	}
+
+	setInterval(nowplaying, 2200);
 }
 
 
@@ -54,8 +61,8 @@ module.exports = exports = socket => {
 function run(flags){
 	let args = Array.isArray(flags) ? flags : [flags];
 
-	console.log('------');
-	console.log(flags);
+	log('------');
+	log(flags);
 
 	spawn(PLAYER, args);
 }
@@ -85,24 +92,53 @@ function play(index){
 
 
 
+
+var temp = null;
 function nowplaying(){
-	 let mask = '%artist%:$:%album%:$:%title%:$:%genre%:$:%date%:$:%time%';
+	 let mask = '%artist%:$:%album%:$:%title%';
+	 mask+= ':$:%genre%:$:%date%:$:%time%';
+	 mask+= ':$:%position%:$:%file%'
 
 	 runWithCallback(PLAYER, [ 'current','-f', mask ], (raw) => {
 		 let data = raw.split(':$:');
 
 		 let _current = {
-			 artist: data[0],
-				album: data[1],
-				title: data[2],
-				genre: data[3],
-				 date: data[4],
-				 time: data[5]
+				 artist: data[0],
+					album: data[1],
+					title: data[2],
+					genre: data[3],
+					 date: data[4],
+					 time: data[5],
+			 position: parseInt(data[6]-1),
+					 file: data[7],
 		 };
 
-		 _socket.emit('player:nowplaying', _current);
+		 //if (temp == null || temp != _current.album){
+			 //temp = _current.album
+			 //getCovers(_current);
+
+		 //}
+
+		_socket.allEmit('player:nowplaying', _current);
 
 	 });
+}
+
+
+
+function getCovers(_current){
+	 log('downloading covers');
+	 let dir = MDIR + path.dirname(_current.file) + '/';
+	 dir = dir.replace(/\s/g, '\ ');
+	 if (!fs.existsSync('front.png')){
+
+		  let s = `${_current.artist} ${_current.album}`;
+			crawl.getFrontBack(s, dir, (err, res) => {
+				if (err) log(err);
+				log(res);
+			
+			});
+	 }
 }
 
 

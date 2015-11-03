@@ -40,6 +40,9 @@ server = app.listen(conf.APP.PORT, () => log(`Server listing:${conf.APP.PORT}`))
 io = require('socket.io')(server);
 
 io.on('connection', socket => {
+	socket.allEmit = io.sockets.emit;
+	socket.emitStream = ss(socket).emit;
+
 	mplayer = require('./mplayer')(socket);
 	//require('./auth').listen(socket);
 
