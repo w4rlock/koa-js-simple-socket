@@ -8,10 +8,10 @@
 	}
 	.actions{
 		margin: 10px 50px 30px 40px;
-		background: rgba(0, 255, 249, 0.23);
+		/*background: rgba(0, 255, 249, 0.23);*/
 		text-align: center;
 		border-radius: 7px;
-		border: 1px solid #31948C;
+		/*border: 1px solid #31948C;*/
 	}
 
 	.collection{
@@ -28,9 +28,17 @@
 	.collection a.collection-item {
 		color: #17E2CF;
 	}
+
 	.collection .collection-item {
 		border-bottom: 1px solid #26a69a;
-		background-color: rgba(0, 103, 99, 0.21);
+		background-color: rgba(0, 0, 0, 0.21);
+		padding: 12px 20px;
+		border: 0px;
+	}
+
+	.btn-action{
+		margin: -2px;
+		border-radius: 5px
 	}
 
 	#loadingbar{
@@ -58,6 +66,23 @@
 		width: 100%;
 	}
 
+	.covercont{
+		text-align: center;
+	}
+
+	#cover{
+		width: 300px;
+		height: 280px;
+	}
+
+	.playls_artist{
+		color: #A1FF5E;
+	}
+	.playls_time{
+		float: right;
+		color: #FFFFFF;
+	}
+
 	.uploadbutton{
 		float: right;
 		margin-right: 10;
@@ -65,6 +90,11 @@
 
 	.collection a.collection-item {
 		    color: #17E2CF;
+	}
+
+	.collection .collection-item.active{
+		background-color: #F44336;
+		color: #FFFFFF;
 	}
 
 	.collection a.collection-item:not(.active):hover {
@@ -85,13 +115,17 @@
 
 	<div id="player">
 		<marquee class="marquee" behavior="scroll" direction="left"></marquee>
-			<div class="actions">
-				<a onclick="run('player:stop')" class="btn-floating btn-large waves-effect waves-light red"><i class="mdi mdi-stop"></i></a>
-				<a onclick="run('player:play')" class="btn-floating btn-large waves-effect waves-light red"><i class="mdi mdi-play-circle-outline"></i></a>
-				<a onclick="run('player:next')" class="btn-floating btn-large waves-effect waves-light red"><i class="mdi mdi-skip-next"></i></a>
-				<a onclick="runWithArgs('volumen:set','-7')" class="btn-floating btn-large waves-effect waves-light black"><i class="mdi mdi-volume-medium"></i></a>
-				<a onclick="runWithArgs('volumen:set','+7')" class="btn-floating btn-large waves-effect waves-light black"><i class="mdi mdi-volume-high"></i></a>
-				<a onclick="run('volumen:mute')" class="btn-floating btn-large waves-effect waves-light black"><i class="mdi mdi-volume-off"></i></a>
+
+		<div class="covercont">
+			<img id="cover"/>
+		</div>
+		<div class="actions">
+				<a onclick="run('player:stop')" class="btn-floating btn-action btn-large waves-effect waves-light red"><i class="mdi mdi-stop"></i></a>
+				<a onclick="run('player:play')" class="btn-floating btn-action btn-large waves-effect waves-light red"><i class="mdi mdi-play-circle-outline"></i></a>
+				<a onclick="run('player:next')" class="btn-floating btn-action btn-large waves-effect waves-light red"><i class="mdi mdi-skip-next"></i></a>
+				<a onclick="runWithArgs('volumen:set','-7')" class="btn-floating btn-action btn-large waves-effect waves-light black"><i class="mdi mdi-volume-medium"></i></a>
+				<a onclick="runWithArgs('volumen:set','+7')" class="btn-floating btn-action btn-large waves-effect waves-light black"><i class="mdi mdi-volume-high"></i></a>
+				<a onclick="run('volumen:mute')" class="btn-floating btn-action btn-large waves-effect waves-light black"><i class="mdi mdi-volume-off"></i></a>
 			</div>
 			 <div class="collection" style="width:400px; margin-left: 40px">
 			</div>

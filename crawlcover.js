@@ -10,55 +10,54 @@ var log = console.log
 	, Crawl = module.exports = exports = {};
 
 
-Crawl.getAllCovers = (artcover, cb) => {
-	let url = getUrlSearch(artcover);
-	get(url, '.thumbnail h4 a', 'href', (err, links) => {
+Crawl.getAllCovers = (artcover) => {
+	return new Promise((res, err) => {
 
-		if (err) return;
+		let url = getUrlSearch(artcover);
 
-		let zip = HOST+links[0]+'/zip';
-		log(zip);
+		get(url, '.thumbnail h4 a', 'href')
+		.then((links) => {
 
-		let dir = temp.mkdirSync('covers_')+'/covers.zip';
-		utils.download(zip, dir, (err, file) => {
-			if (err){
-				cb(err, null);
-				return;
-			}
+				let zip = HOST+links[0]+'/zip';
+				log(zip);
 
-			utils.extractpkg(file, cb);
+				let dir = temp.mkdirSync('covers_')+'/covers.zip';
+				utils.download(zip, dir).then(
+					(file) => utils.extractpkg(file),
+					(error) => err(error)
+				);
 
 		});
 
-	});
+		log(url);
 
-	log(url);
-}
-
-
-
-Crawl.getFrontBack = (search, dir, cb) => {
-	let url = getUrlSearch(search);
-
-	get(url, '.thumbnail h4 a', 'href', (err, links) => {
-		if (err){ cb(err, null); return; }
-
-		get(HOST+links[0], '.gallerytwo-item', 'href', (err, lnk) => {
-			if (err){ cb(err, null); return; }
-
-			utils.download(lnk[0], dir+'front.png', (err,out) => {
-				if (err){ cb(err, null); return;}
-
-				utils.download(lnk[1], dir+'back.png', (err, out) => {
-					if (err){ cb(err, null); return;}
-
-					cb(null, dir);
-				});
-
-			});
-		});
 	});
 }
+
+
+
+Crawl.getFrontBack = (search, dir) => {
+	return new Promise((res, err) => {
+		let url = getUrlSearch(search);
+
+		get(url, '.thumbnail h4 a', 'href')
+		.then((links) => get(HOST+links[0], '.gallerytwo-item', 'href'))
+		.then((links) => {
+
+			/** Parallel async */
+			Promise.all([ 
+					utils.download(links[0], dir+'front.png'),
+					utils.download(links[1], dir+'back.png')
+			])
+			.then(res)
+
+		})
+		.catch(err);
+
+	});
+
+}
+
 
 
 function getUrlSearch(artcover) {
@@ -67,22 +66,25 @@ function getUrlSearch(artcover) {
 }
 
 
-function get(url, filter, attr, callback){
-	request({ uri: url}, (err, resp, body) => {
 
-		let $ = cheerio.load(body);
-		let res = [];
+function get(url, filter, attr){
+	return new Promise((res, rej) => {
+		log('downloading ', url);
 
-		$(filter).each( (i, html) => {
-			res.push($(html).attr(attr));
+		request({ uri: url}, (err, resp, body) => {
+			let $ = cheerio.load(body);
+			let dat = [];
+
+			$(filter).each((i, html) => {
+				dat.push($(html).attr(attr));
+			});
+
+			if (!dat || dat.length < 1)
+				rej('resource not found');
+			else
+				res(dat);
+
 		});
-
-		if (!res || res.length < 1){
-			callback('resource not found', null);
-		}
-		else{
-			callback(null, res);
-		}
 
 	});
 }

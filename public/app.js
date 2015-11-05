@@ -14,10 +14,18 @@ io.on('player:nowplaying',	function(data) {
 
 io.emit('playlist:current');
 
+io.on('cover', function(stream){
+	$('#cover').attr('src', 'data:image/jpg;base64,' + stream.buffer);
+});
+
 io.on('playlist:current', function(songs){
-	for (var i in songs){
-		$('.collection').append('<a id="song_'+i+'" href="#!" class="collection-item">'+songs[i]+'</a>');
-	}
+	var text = null;
+	songs.forEach(function(s, i){
+		text= (i+1) + ' - <strong class="playls_artist">'+s.artist+'</strong>';
+		text+= ' - ' + s.title 
+		text+= '<strong class="playls_time">'+s.time+'</strong>';
+		$('.collection').append('<a id="song_'+i+'" href="#!" class="collection-item">'+ text +'</a>');
+	});
 
 	$('.collection a').click(function(){
 		var id = $(this).attr('id').split('_')[1];
