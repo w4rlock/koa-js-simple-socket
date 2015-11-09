@@ -4,20 +4,20 @@ const PLAYER = 'mpc';
 const AMIXER = 'amixer';
 const MDIR = '/server/media/music/';
 
-var spawn = require('child_process').spawn;
-var crawl = require('./crawlcover.js');
-var nutil = require('./nutil')
-var path = require('path');
-var fs = require('fs');
-var log = console.log;
-var _timerNowPlaying = null;
-var _currentPlay = null;
-var _socket = null;
-var Playlists = {};
-var MPlayer = {};
-var Volumen = {};
+let spawn = require('child_process').spawn;
+let crawl = require('./crawlcover.js');
+let nutil = require('./nutil')
+let path = require('path');
+let fs = require('fs');
+let log = console.log;
+let _timerNowPlaying = null;
+let _currentPlay = null;
+let _socket = null;
+let Playlists = {};
+let MPlayer = {};
+let Volumen = {};
 
-var _listeners = {
+let _listeners = {
 	volumen: Volumen,
 	player: MPlayer,
 	playlist: Playlists
@@ -27,8 +27,8 @@ var _listeners = {
 MPlayer.stop = () => run('stop');
 MPlayer.next = () => run('next');
 MPlayer.pause = () => run('pause');
-MPlayer.nowplaying = () => nowplaying();
-MPlayer.play = (index) => play(index);
+MPlayer.nowplaying = nowplaying;
+MPlayer.play = play;
 
 // +5, -5, 60 in perc 60
 Volumen.set = (perc) => run(['volume', perc]);
@@ -50,11 +50,12 @@ module.exports = exports = {
 	},
 
 	listen: (socket) => {
-		_timerNowPlaying = setInterval(nowplaying, 2200);
-
 		_socket = socket;
+
+		if (_timerNowPlaying == null)
+			_timerNowPlaying = setInterval(nowplaying, 2200);
+
 		if (_currentPlay){
-			log(_currentPlay.file);
 			sendCover(_currentPlay);
 		}
 
@@ -126,11 +127,12 @@ function nowplaying(){
 					 file: data[7],
 		 };
 
-		 if (_currentPlay == null || _currentPlay != _current.album){
-			 _currentPlay = _current.album
+		 if (_currentPlay == null || _currentPlay.album != _current.album){
+			 _currentPlay = _current;
 			 sendCover(_current);
 		 }
 
+		log(JSON.stringify(_currentPlay));
 		_socket.allEmit('player:nowplaying', _current);
 
 	 });
@@ -142,7 +144,7 @@ function sendCover(_current){
 			log('Sending stream cover ', res[0]);
 
 			 fs.readFile(res[0], (err, buf) => {
-				 _socket.emit('cover', { buffer: buf.toString('base64') });
+				 _socket.allEmit('cover', { buffer: buf.toString('base64') });
 			 });
 		 },
 		 (err) => log(err));

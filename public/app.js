@@ -1,15 +1,18 @@
 io = io.connect()
 currentsong = null;
 
-io.on('player:nowplaying',	function(data) {
-	if (currentsong == null || currentsong.position != data.position){
-		setActiveSong(data.position);
-	}
+function nowPlayingListener(){
+	io.on('player:nowplaying',	function(data) {
+		if (currentsong == null || currentsong.position != data.position){
+			setActiveSong(data.position);
+		}
 
-	currentsong = data;
-	$('.marquee').text(data.artist+' :: '+data.album+' :: '+data.title);
+		currentsong = data;
+		$('.marquee').text(data.artist+' :: '+data.album+' :: '+data.title);
 
-});
+	});
+
+}
 
 
 io.emit('playlist:current');
@@ -19,6 +22,8 @@ io.on('cover', function(stream){
 });
 
 io.on('playlist:current', function(songs){
+	nowPlayingListener();
+
 	var text = null;
 	songs.forEach(function(s, i){
 		text= (i+1) + ' - <strong class="playls_artist">'+s.artist+'</strong>';
