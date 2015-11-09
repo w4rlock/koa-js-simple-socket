@@ -1,6 +1,7 @@
 <!-- Compiled and minified CSS -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.1/css/materialize.min.css">
 <link href="bower_components/mdi/css/materialdesignicons.min.css" media="all" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Play">
 <style>
 	body{
 		background: url('http://cmster.com/media/SDFYCQWVmdyWRPnD6LIi6b5lQsyVKtFFAE4u8WXE252TpTmszOyetY11IdHTbAK2.png');
@@ -23,10 +24,14 @@
 		font-weight: bold;
 		margin-left: 50px;
 		color: #00FFC8;
+		font-size: 12px !important;
+		font-family: Play;
 	}
 
 	.collection a.collection-item {
 		color: #17E2CF;
+		font-size: 14px !important;
+		font-family: Play;
 	}
 
 	.collection .collection-item {
@@ -34,6 +39,9 @@
 		background-color: rgba(0, 0, 0, 0.21);
 		padding: 12px 20px;
 		border: 0px;
+	}
+	.playlist{
+		width: 100%;
 	}
 
 	.btn-action{
@@ -127,7 +135,7 @@
 				<a onclick="runWithArgs('volumen:set','+7')" class="btn-floating btn-action btn-large waves-effect waves-light black"><i class="mdi mdi-volume-high"></i></a>
 				<a onclick="run('volumen:mute')" class="btn-floating btn-action btn-large waves-effect waves-light black"><i class="mdi mdi-volume-off"></i></a>
 			</div>
-			 <div class="collection" style="width:400px; margin-left: 40px">
+			 <div class="collection playlist">
 			</div>
 	</div>
 	   

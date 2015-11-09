@@ -63,7 +63,7 @@ Util.download = (url, out) => {
 
 Util.extractpkg = (file) => {
 	return new Promise((res, rej) => {
-
+			//file = Util.escapeShell(file);
 			let ext = path.extname(file);
 			let cmd = pkg[ext];
 			let args = [];
@@ -72,6 +72,7 @@ Util.extractpkg = (file) => {
 
 			switch(ext){
 				case '.zip': 
+					args.push('-o');
 					args.push(file);
 					args.push('-d');
 					args.push(MUSIC_DIR);
@@ -95,14 +96,24 @@ Util.extractpkg = (file) => {
 					return;
 			}
 
-			log(cmd, args);
-			spawn(cmd, args).on('exit', (code) => {
-				log(file, code);
+
+			let proc = spawn(cmd, args);
+			proc.stdout.on('data', (data) => {
+				log('stdout: ' + data);
+			});
+
+			proc.stderr.on('data', (data) => {
+				log('stderr: ' + data);
+			});
+
+			proc.on('close', (code) => {
+				log('child process exited with code ' + code);
 
 				if (code == 0)
 					res(file);
 				else
 					rej('error unzip');
+
 			});
 
 	});

@@ -123,6 +123,7 @@ function nowplaying(){
 					genre: data[3],
 					 date: data[4],
 					 time: data[5],
+
 			 position: parseInt(data[6]-1),
 					 file: data[7],
 		 };
@@ -132,7 +133,7 @@ function nowplaying(){
 			 sendCover(_current);
 		 }
 
-		log(JSON.stringify(_currentPlay));
+		//log(JSON.stringify(_currentPlay));
 		_socket.allEmit('player:nowplaying', _current);
 
 	 });
@@ -161,6 +162,12 @@ function getCovers(_song){
 			 let s = `${_song.artist} ${_song.album}`;
 			 log('Downloading covers ', s);
 
+			 /*
+				* remove posible extra texts [Remaster] ..etc
+				*/
+			 s = s.replace(/ *\[[^)]*\] */g, " ");
+			 s = s.replace(/ *\([^)]*\) */g, " ");
+
 			 crawl.getFrontBack(s, dir).then(res, err);
 			}
 			else{
@@ -186,6 +193,7 @@ function playlist_get(){
 
 	 runWithCallback(PLAYER, [ 'playlist', '-f', mask ]).then((raw) => {
 		 let res = raw.split('\n');
+		 log(res.length);
 
 		 if (res){
 			 res.pop();
@@ -203,6 +211,7 @@ function playlist_get(){
 			 });
 		 }
 
+		 log(res.length);
 		 _socket.emit('playlist:current', res);
 	 });
 }
