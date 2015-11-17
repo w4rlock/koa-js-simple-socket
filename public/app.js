@@ -25,12 +25,26 @@ io.on('playlist:current', function(songs){
 	nowPlayingListener();
 
 	var text = null;
-	songs.forEach(function(s, i){
-		text= (i+1) + ' - <strong class="playls_artist">'+s.artist+'</strong>';
-		text+= ' - ' + s.title 
-		text+= '<strong class="playls_time">'+s.time+'</strong>';
-		$('.collection').append('<a id="song_'+i+'" href="#!" class="collection-item">'+ text +'</a>');
-	});
+	var idalbum = null;
+	var cls = null;
+
+	if (songs && songs.length > 0){
+		idalbum = songs[0].date+songs[0].artist;
+
+		songs.forEach(function(s, i){
+			text= (i+1) + ' - <strong class="playls_artist">'+s.artist+'</strong>';
+			text+= ' - ' + s.date + ' - ' + s.title 
+			text+= '<strong class="playls_time">'+s.time+'</strong>';
+
+			cls = "collection-item";
+			if (idalbum != s.date+s.artist){
+				idalbum = s.date+s.artist;
+				cls+=" pl-separator";
+			}
+
+			$('.collection').append('<a id="song_'+i+'" href="#!" class="'+cls+'">'+ text +'</a>');
+		});
+	}
 
 	$('.collection a').click(function(){
 		var id = $(this).attr('id').split('_')[1];
@@ -90,3 +104,6 @@ function runWithArgs(action,args){
 }
 
 
+$('.uploadbutton a').click(function(){
+	$(this).parent().find('input').click();
+});

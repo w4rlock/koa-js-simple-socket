@@ -5,6 +5,7 @@ const AMIXER = 'amixer';
 const MDIR = '/server/media/music/';
 
 let spawn = require('child_process').spawn;
+let exec = require('child_process').exec;
 let crawl = require('./crawlcover.js');
 let nutil = require('./nutil')
 let path = require('path');
@@ -96,6 +97,16 @@ function runWithCallback(cmd, args){
 
 
 
+function execWithCallback(cmd, args){
+	 return new Promise((res, err) => {
+		 exec(cmd, (err, stout, sterr) => {
+			 res(stout);
+		 });
+	});
+}
+
+
+
 function play(index){
 	if (!index){
 		run('toggle');
@@ -155,7 +166,7 @@ function sendCover(_current){
 function getCovers(_song){
 	 return new Promise((res, err) => {
 		 let dir = MDIR + path.dirname(_song.file) + '/';
-		 let file = dir + 'front.png';
+		 let file = dir + 'front_thumb.png';
 
 		 log('Searching covers ', dir);
 		 if (!fs.existsSync(file)){
@@ -168,7 +179,9 @@ function getCovers(_song){
 			 s = s.replace(/ *\[[^)]*\] */g, " ");
 			 s = s.replace(/ *\([^)]*\) */g, " ");
 
-			 crawl.getFrontBack(s, dir).then(res, err);
+			 crawl.getFrontBack(s, dir)
+			  .then(nutil.thumbnails)
+				.then(res, err);
 			}
 			else{
 				res([file]);
@@ -191,7 +204,7 @@ function play(index){
 function playlist_get(){
 	 let mask = '%artist%:$:%album%:$:%title%:$:%date%:$:%time%';
 
-	 runWithCallback(PLAYER, [ 'playlist', '-f', mask ]).then((raw) => {
+	 execWithCallback(`${PLAYER} playlist -f ${mask}`).then((raw) => {
 		 let res = raw.split('\n');
 		 log(res.length);
 

@@ -38,6 +38,41 @@ Util.upload = (stream, data) => {
 
 
 
+Util.thumbnails = (imgs) => {
+	log('Convert thumbnails ', JSON.stringify(imgs));
+
+	return new Promise((res, rej) => {
+		Promise.all(imgs.map(Util.thumbnail)).then(res, rej);
+	});
+}
+
+
+Util.thumbnail = (img) => {
+	return new Promise((res, rej) => {
+		log('Convert thumbnail ', img);
+		let ext = path.extname(img);
+		let thumb = img.replace(ext, '_thumb'+ext);
+
+		let args = [];
+		args.push(img);
+		args.push('-thumbnail');
+		args.push('300x280');
+		args.push(thumb);
+
+		spawn('convert', args).on('exit', status => {
+			if (status != 0)
+				rej('error convert thumbnail img '+img);
+			else
+				res(thumb);
+		});
+
+	});
+}
+
+
+
+
+
 Util.download = (url, out) => {
 	return new Promise((res, rej) => {
 		log('wget downloading %s::%s ',url, out);
