@@ -4,109 +4,177 @@
 <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Play">
 <style>
 	body{
-		background: url('http://cmster.com/media/SDFYCQWVmdyWRPnD6LIi6b5lQsyVKtFFAE4u8WXE252TpTmszOyetY11IdHTbAK2.png');
-		background-attachment: fixed;
-	}
-	.actions{
-		margin: 10px 50px 30px 40px;
-		/*background: rgba(0, 255, 249, 0.23);*/
-		text-align: center;
-		border-radius: 7px;
-		/*border: 1px solid #31948C;*/
-	}
+background: url('http://www.hobicell.com/wallpaper/guitarra/guitarra-wallpaper-taringa-gibson-explorer-wallpaper-.jpg');
+background-attachment: fixed;
+background-size: cover;
+}
 
-	.collection{
-		border: 1px solid #26a69a;
-	}
+.actions{
+background-size: 16px 16px;
+margin-top: 10px;
+text-align: center;
+border: 1px solid #292726;
+}
 
-	.marquee{
-		width: 390px;
-		font-weight: bold;
-		margin-left: 50px;
-		color: #00FFC8;
-		font-size: 12px !important;
-		font-family: Play;
+.collection{
+border: 1px solid #292726;
+border-top: 0px;
+}
+
+.small-cover{
+background: url('http://vignette3.wikia.nocookie.net/whentheycry/images/5/50/Fuck_you.jpg/revision/20150523075437');
+width: 69px;
+height: 69px;
+background-size: cover;
+margin-left: 22px;
+border: 2px solid #272626;
+border-radius: 50%;
+}
+
+.marquee{
+width: 89%;;
+font-weight: bold;
+color: #AEAFAE;
+font-size: 12px !important;
+font-family: Play;
 	}
 
 	.collection a.collection-item {
-		color: #17E2CF;
-		font-size: 14px !important;
-		font-family: Play;
+color: #808080;
+font-size: 13px !important;
+font-family: Play;
 	}
 
 	.collection .collection-item {
-		border-bottom: 1px solid #26a69a;
-		background-color: rgba(0, 0, 0, 0.21);
-		padding: 12px 20px;
-		border: 0px;
-	}
-	.playlist{
-		width: 100%;
-	}
-	.pl-separator{
-		border-top: 1px solid !important;
+border-bottom: 1px solid #26a69a;
+background-color: rgba(0, 0, 0, 0.21);
+padding: 7px 20px;
+border: 0px;
 	}
 
-	.btn-action{
-		margin: -2px;
-		border-radius: 5px
-	}
+.playlist{
+width: 100%;
+}
 
-	#loadingbar{
-		margin: 0 !important;
-		display: none;
-	}
+.pl-separator{
+border-top: 1px solid #FF1B1B;
+margin: 10;
+}
+
+.btn-action{
+margin: -2px;
+border-radius: 5px
+}
+
+#loadingbar{
+margin: 0 !important;
+display: none;
+}
 
 	#player{
-		background: rgba(0,0,0,.65);
-		width: 615px;
-		padding: 10;
-		margin: 15;
-		-webkit-box-shadow: 0px 1px 47px -1px rgba(21,173,135,1);
-		-moz-box-shadow: 0px 1px 47px -1px rgba(21,173,135,1);
-		box-shadow: 0px 1px 47px -1px rgba(21,173,135,1);
-		border-radius: 7px;
+background: rgba(0, 0, 0, 0.83);
+width: 515px;
+margin: 0 0 0 20;
+-webkit-box-shadow: 0px 1px 47px -1px rgba(21,173,135,1);
+-moz-box-shadow: 0px 1px 47px -1px rgba(21,173,135,1);
+box-shadow: 22px 13px 68px -1px rgb(0, 0, 0);
+border-radius: 7px;
+border: 1px solid;
 	}
 
 	#file{
-		display: none;
+display: none;
 	}
 
 	.covercont{
-		text-align: center;
+text-align: center;
 	}
 
 	#cover{
-		width: 300px;
-		height: 280px;
+width: 300px;
+height: 280px;
 	}
 
-	.playls_artist{
-		color: #A1FF5E;
-	}
-	.playls_time{
-		float: right;
-		color: #FFFFFF;
-	}
+.playls_artist{
+color: #A1FF5E;
+}
 
-	.uploadbutton{
-		float: right;
-		margin-right: 10;
-	}
+.playls_index{
+color: #FFFFFF;
+}
+.playls_time{
+float: right;
+color: #FFFFFF;
+}
 
-	.collection a.collection-item {
-		    color: #17E2CF;
-	}
+.header-album{
+background: rgba(60, 59, 59, 0.48);
+width: 100%;
+margin: 10 10 10 0;
+border: 1px solid #2D2D2D;
+border-top: 1px solid red;
+padding-left: 9px;
+padding-top: 3px
+}
+
+.header-album h5,
+.header-album h6{
+	font-family: Play;
+	color: #EA4B4B;
+	margin: 5px;
+}
+.header-album h6{
+	color: white;
+}
+
+.uploadbutton{
+float: right;
+margin-right: 10;
+}
 
 	.collection .collection-item.active{
-		background-color: #F44336;
-		color: #FFFFFF;
-	}
+color: #FFFFFF;
+background: rgba(255, 94, 94, 0.43);
+border: 1px solid #FF3333;
 
-	.collection a.collection-item:not(.active):hover {
-		background-color: rgba(21,173,135, .7);
-	}
+//background: rgba(128, 128, 128, 0.43);
+//border: 1px solid #888787;
+}
 
+.collection a.collection-item:not(.active):hover {
+background-color: rgba(0,0,0,.0);
+color: #FFFFFF;
+}
+
+.sprogress .timeperc{
+position: absolute;
+background-color: #DE4747;
+top: 0;
+left: 0;
+bottom: 0;
+background-color: rgba(243, 79, 87, 0.93)
+-webkit-transition: width .3s linear;
+-moz-transition: width .3s linear;
+-o-transition: width .3s linear;
+-ms-transition: width .3s linear;
+transition: width .3s linear;
+}
+.sprogress {
+position: relative;
+height: 4px;
+display: block;
+width: 100%;
+background-color: #2D2D29;
+margin: 0.5rem 0 1rem 0;
+overflow: hidden;
+padding: 0;
+margin-bottom: 8px;
+}
+
+.mdi-float{
+box-shadow: 0px 0px 33px 7px rgb(255, 255, 255);
+margin: 10px;
+	}
 
 </style>
 <body ng-controller="MainCtrl">
@@ -116,10 +184,13 @@
 
 	<div class="uploadbutton">
 		<input id="file" type="file" />
-		<a class="btn-floating btn-large waves-effect waves-light blue"><i class="mdi mdi-cloud-upload"></i></a>
+		<a class="btn-floating btn-large waves-effect waves-light blue mdi-float"><i class="mdi mdi-cloud-upload"></i></a>
 	</div>
 
 	<div id="player">
+		<div id="timebar" class="sprogress">
+			<div class="timeperc" style="width: 1%"></div>
+		</div>
 		<div style="text-align: center; width: 100%">
 			<marquee class="marquee" behavior="scroll" direction="left"></marquee>
 		</div>
@@ -135,8 +206,7 @@
 				<a onclick="runWithArgs('volumen:set','+7')" class="btn-floating btn-action btn-large waves-effect waves-light black"><i class="mdi mdi-volume-high"></i></a>
 				<a onclick="run('volumen:mute')" class="btn-floating btn-action btn-large waves-effect waves-light black"><i class="mdi mdi-volume-off"></i></a>
 			</div>
-			 <div class="collection playlist">
-			</div>
+			<div class="collection playlist"> </div>
 	</div>
 	   
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>

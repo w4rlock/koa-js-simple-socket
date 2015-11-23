@@ -1,5 +1,6 @@
 io = io.connect()
 currentsong = null;
+currentUploadName = null;
 
 function nowPlayingListener(){
 	io.on('player:nowplaying',	function(data) {
@@ -7,6 +8,8 @@ function nowPlayingListener(){
 			setActiveSong(data.position);
 		}
 
+		console.log(data);
+		updateSongProgressTime(data.progress.perc);
 		currentsong = data;
 		$('.marquee').text(data.artist+' :: '+data.album+' :: '+data.title);
 
@@ -18,7 +21,12 @@ function nowPlayingListener(){
 io.emit('playlist:current');
 
 io.on('cover', function(stream){
-	$('#cover').attr('src', 'data:image/jpg;base64,' + stream.buffer);
+	if (stream.id){
+		$('#'+stream.id).attr('src', 'data:image/jpg;base64,' + stream.buffer);
+	}
+	else{
+		$('#cover').attr('src', 'data:image/jpg;base64,' + stream.buffer);
+	}
 });
 
 io.on('playlist:current', function(songs){
@@ -29,17 +37,36 @@ io.on('playlist:current', function(songs){
 	var cls = null;
 
 	if (songs && songs.length > 0){
-		idalbum = songs[0].date+songs[0].artist;
-
 		songs.forEach(function(s, i){
-			text= (i+1) + ' - <strong class="playls_artist">'+s.artist+'</strong>';
-			text+= ' - ' + s.date + ' - ' + s.title 
-			text+= '<strong class="playls_time">'+s.time+'</strong>';
+			text = (i+1) + ' - <strong class="playls_artist">'+s.artist+'</strong>';
+			text+= ' - ' + s.title 
+
+			var l = (s.artist+s.title+s.year).length;
+			if (l > 68){
+				var offset = 51;
+				text = text.substr(0,52+offset) + '...';
+				console.log(text);
+			}
+
+			text+= '<strong class="playls_time">'+s.duration+'</strong>';
 
 			cls = "collection-item";
-			if (idalbum != s.date+s.artist){
-				idalbum = s.date+s.artist;
-				cls+=" pl-separator";
+			if (idalbum != s.album.replace(/\s/g, '')){
+				idalbum = s.album.replace(/\s/g, '');
+
+				io.emit('playlist:albumcover',{ fromPlaylist: true, file: s.file, id: idalbum });
+
+				$('.collection').append(
+						'<div class="row header-album">'+
+						'<div class="col s9">'+
+							'<h5>'+s.artist+'</h5>'+
+							'<h6>'+s.album+' (' + s.year +')</h6>'+
+						'</div>'+
+						'<div class="col s2">'+
+							'<img id='+idalbum+' class="small-cover"></img>'+
+						'</div>'+
+						'</div>'
+				);
 			}
 
 			$('.collection').append('<a id="song_'+i+'" href="#!" class="'+cls+'">'+ text +'</a>');
@@ -61,6 +88,7 @@ $('#file').change(function(e) {
 	var perc = null;
 	var tranf = null;
 
+	currentUploadName = file.name;
 	ss(io).emit('upload', stream, {size: file.size, name: file.name });
 	transf = ss.createBlobReadStream(file);
 	transf.pipe(stream);
@@ -78,12 +106,16 @@ $('#file').change(function(e) {
 
 
 function updateProgressBarUpload(perc){
+		console.log('Uploading + (' + perc + ') - ' + currentUploadName);
 		$(".determinate").css('width', perc);
 
 		if (perc == "100%"){
 			$("#loadingbar").hide();
 		}
+}
 
+function updateSongProgressTime(perc){
+		$(".timeperc").css('width', perc+'%');
 }
 
 

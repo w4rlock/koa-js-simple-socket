@@ -35,7 +35,8 @@ MPlayer.play = play;
 Volumen.set = (perc) => run(['volume', perc]);
 Volumen.mute = () => spawn(AMIXER, ['set', 'Master', 'toggle']);
 
-Playlists.current = () => playlist_get();
+Playlists.current = playlist_get;
+Playlists.albumcover = sendCover;
 
 
 
@@ -124,8 +125,17 @@ function nowplaying(){
 	 mask+= ':$:%genre%:$:%date%:$:%time%';
 	 mask+= ':$:%position%:$:%file%'
 
-	 runWithCallback(PLAYER, [ 'current','-f', mask ]).then((raw) => {
-		 let data = raw.split(':$:');
+	 runWithCallback(PLAYER, [ '-f', mask ]).then((raw) => {
+		 let rdata = raw.split('\n');
+		 let data = rdata[0].split(':$:');
+
+
+		 let stimes = rdata[1].split(' ');
+		 let ptime = stimes[4].split('/')[0];
+		 let pperc = stimes[5].match(/\d+/g)[0];
+
+		 let _status = stimes[0].match(/\w+/g)[0];
+		 let vol = rdata[2].split('  ')[0].match(/\d+/g)[0];
 
 		 let _current = {
 				 artist: data[0],
@@ -133,10 +143,13 @@ function nowplaying(){
 					title: data[2],
 					genre: data[3],
 					 date: data[4],
-					 time: data[5],
-
+			 duration: data[5],
 			 position: parseInt(data[6]-1),
 					 file: data[7],
+				 status: _status,
+						vol: vol,
+		   progress: { time: ptime, perc: pperc }
+
 		 };
 
 		 if (_currentPlay == null || _currentPlay.album != _current.album){
@@ -144,19 +157,23 @@ function nowplaying(){
 			 sendCover(_current);
 		 }
 
-		//log(JSON.stringify(_currentPlay));
 		_socket.allEmit('player:nowplaying', _current);
 
 	 });
 }
-
 
 function sendCover(_current){
 	 getCovers(_current).then((res) => {
 			log('Sending stream cover ', res[0]);
 
 			 fs.readFile(res[0], (err, buf) => {
-				 _socket.allEmit('cover', { buffer: buf.toString('base64') });
+				 if (buf){
+					 if (_current.fromPlaylist)
+						 _socket.emit('cover', { buffer: buf.toString('base64'), id: _current.id });
+					 else
+						 _socket.allEmit('cover', { buffer: buf.toString('base64') });
+				 }
+
 			 });
 		 },
 		 (err) => log(err));
@@ -169,15 +186,16 @@ function getCovers(_song){
 		 let file = dir + 'front_thumb.png';
 
 		 log('Searching covers ', dir);
-		 if (!fs.existsSync(file)){
+		 if (!fs.existsSync(file) && !_song.fromPlaylist){
 			 let s = `${_song.artist} ${_song.album}`;
-			 log('Downloading covers ', s);
 
 			 /*
 				* remove posible extra texts [Remaster] ..etc
 				*/
 			 s = s.replace(/ *\[[^)]*\] */g, " ");
 			 s = s.replace(/ *\([^)]*\) */g, " ");
+
+			 log('Downloading covers ', s);
 
 			 crawl.getFrontBack(s, dir)
 			  .then(nutil.thumbnails)
@@ -202,7 +220,7 @@ function play(index){
 
 
 function playlist_get(){
-	 let mask = '%artist%:$:%album%:$:%title%:$:%date%:$:%time%';
+	 let mask = '%artist%:$:%album%:$:%title%:$:%date%:$:%time%:$:%file%';
 
 	 execWithCallback(`${PLAYER} playlist -f ${mask}`).then((raw) => {
 		 let res = raw.split('\n');
@@ -217,8 +235,9 @@ function playlist_get(){
 					 artist: data[0],
 						album: data[1],
 						title: data[2],
-						 date: data[3],
-						 time: data[4]
+						 year: data[3],
+				 duration: data[4],
+						 file: data[5]
 				 };
 			 
 			 });

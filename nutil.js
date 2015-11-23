@@ -27,7 +27,7 @@ Util.upload = (stream, data) => {
 			log('finish upload ', filename);
 
 			Util.extractpkg(filename).then(
-				(f) => exec('mpc update && (mpc ls | mpc add)', (e, stdo, stde) => { res(filename); }),
+				(f) => exec('mpc update && mpc clear && (mpc ls | mpc add)', (e, stdo, stde) => { res(filename); }),
 				(e) => { log(e); rej(e); }
 			);
 
