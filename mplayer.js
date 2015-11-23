@@ -2,7 +2,7 @@
 
 const PLAYER = 'mpc';
 const AMIXER = 'amixer';
-const MDIR = '/server/media/music/';
+const MDIR = '/home/ensiferum/Music/';
 
 let spawn = require('child_process').spawn;
 let exec = require('child_process').exec;
@@ -20,9 +20,9 @@ let Volumen = {};
 let cover404 = new Map();
 
 let _listeners = {
-	volumen: Volumen,
-	player: MPlayer,
-	playlist: Playlists
+  volumen: Volumen,
+  player: MPlayer,
+  playlist: Playlists
 }
 
 
@@ -85,10 +85,10 @@ module.exports = exports = {
 
 
 function run(flags){
-	let args = Array.isArray(flags) ? flags : [flags];
+  let args = Array.isArray(flags) ? flags : [flags];
 
-	log(PLAYER, args);
-	spawn(PLAYER, args);
+  log(PLAYER, args);
+  spawn(PLAYER, args);
 }
 
 
@@ -244,31 +244,30 @@ function play(index){
 
 
 function playlist_get(){
-	 let mask = '%artist%:$:%album%:$:%title%:$:%date%:$:%time%:$:%file%';
+  let mask = '%artist%:$:%album%:$:%title%:$:%date%:$:%time%:$:%file%';
 
-	 execWithCallback(`${PLAYER} playlist -f ${mask}`).then((raw) => {
-		 let res = raw.split('\n');
-		 log(res.length);
+  execWithCallback(`${PLAYER} playlist -f ${mask}`).then((raw) => {
+     let res = raw.split('\n');
+     if (res){
+       res.pop();
+       res = res.map(parsePlaylist);
+     }
 
-		 if (res){
-			 res.pop();
-			 res = res.map((dat) => {
-				 let data = dat.split(':$:');
-
-				 return {
-					 artist: data[0],
-						album: data[1],
-						title: data[2],
-						 year: data[3].substr(0,4),
-				 duration: data[4],
-						 file: data[5]
-				 };
-			 
-			 });
-		 }
-
-		 log(res.length);
-		 _socket.emit('playlist:current', res);
-	 });
+     log(res.length);
+     _socket.emit('playlist:current', res);
+  });
 }
 
+
+function parsePlaylist(raw){
+   let data = raw.split(':$:');
+
+   return {
+      artist: data[0] || path.dirname(data[5]).split('/')[0],
+       title: data[2] || path.basename(data[5]).replace(/\.\w{3,}$/g,''),
+       album: data[1], 
+        year: data[3], 
+    duration: data[4],
+        file: data[5]
+  };
+}

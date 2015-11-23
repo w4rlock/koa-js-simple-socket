@@ -1,7 +1,7 @@
 'use strict';
 
 const TMP_DIR = '/tmp/';
-const MUSIC_DIR = '/server/media/music/';
+const MUSIC_DIR = '/home/ensiferum/Music/';
 
 let fs = require('fs');
 let spawn = require('child_process').spawn;

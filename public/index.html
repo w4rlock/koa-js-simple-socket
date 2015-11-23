@@ -4,19 +4,6 @@
 <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Play">
 <link href="css/jquery.circliful.css" rel="stylesheet" type="text/css" />
 <style>
-.top-bar-fixed{
-    position: fixed;
-    top: 0;
-    background: rgb(23, 8, 8);
-    margin: 0;
-    width: 100%;
-    padding: 0;
-    border-bottom: 1px solid grey;
-    z-index: 10;
-    left: 0;
-
-}
-
 body{
 background: url('http://www.hobicell.com/wallpaper/guitarra/guitarra-wallpaper-taringa-gibson-explorer-wallpaper-.jpg');
 background-attachment: fixed;
@@ -52,7 +39,7 @@ font-size: 12px !important;
 font-family: Play;
 color: #FBD1FD;
 margin:10px;
-	}
+}
 
 	.collection a.collection-item {
 color: #808080;
@@ -99,21 +86,16 @@ border: 1px solid #252525;
 padding:0px !important;
 	}
 
-@media only screen and (min-width: 601px){
-	.player{
-		margin:0;
-	}
-}
 
 #file{
 display: none;
-	}
+}
 
-	.covercont{
+.covercont{
 text-align: center;
-	}
+}
 
-	#cover{
+#cover{
 width: 300px;
 height: 280px;
 	}
@@ -175,8 +157,18 @@ border: 1px solid #FF3333;
 //border: 1px solid #888787;
 }
 
+.fumada{
+ z-index: -9999;
+ line-height: 115px;
+left: 10;
+border-radius: 50%;
+width: 90px;
+border: 2px solid #272727;
+
+}
+
 .collection a.collection-item:not(.active):hover {
-background-color: rgba(0,0,0,.0);
+ background-color: rgba(99, 95, 75, 0.41);
 color: #FFFFFF;
 }
 

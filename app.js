@@ -39,13 +39,15 @@ server = app.listen(conf.APP.PORT);
 io = require('socket.io')(server);
 
 io.on('connection', (socket) => {
-	//broadcast function
-	socket.allEmit = io.sockets.emit;
-	socket.emitStream = ss(socket).emit; 
+  console.log(`New client connected ${socket.request.socket.remoteAddress}`);
 
-	mplayer.listen(socket);
-	//require('./auth').listen(socket);
+  //broadcast function
+  socket.allEmit = io.sockets.emit;
+  socket.emitStream = ss(socket).emit; 
 
-	ss(socket).on('upload', mplayer.upload);
+  mplayer.listen(socket);
+  //require('./auth').listen(socket);
+
+  ss(socket).on('upload', mplayer.upload);
 
 });

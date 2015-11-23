@@ -58,12 +58,11 @@ io.on('cover404', function(data){
 });
 
 io.on('cover', function(stream){
-	if (stream.id){
-		$('#'+stream.id).attr('src', 'data:image/jpg;base64,' + stream.buffer);
-	}
-	else{
-		$('#cover').attr('src', 'data:image/jpg;base64,' + stream.buffer);
-	}
+        var source ='data:image/jpg;base64,' + stream.buffer;
+	var element = '#' + (stream.id || 'cover')
+	$(element).attr('src',source );
+        //$('.movecover').append('<img class="fumada" src="'+source+'">');
+
 });
 
 io.on('playlist:current', function(songs){
@@ -112,7 +111,6 @@ io.on('playlist:current', function(songs){
 			$('.collection').append('<a id="song_'+i+'" href="#!" class="'+cls+'">'+ text +'</a>');
 		});
 
-		io.emit('player:cover404');
 	}
 
 	$('.collection a').click(function(){
@@ -183,5 +181,6 @@ $('.uploadbutton a').click(function(){
 });
 
 $('#cover404').click(function(){
+  io.emit('player:cover404');
   $('#modal1').openModal();
 });
