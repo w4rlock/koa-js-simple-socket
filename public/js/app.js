@@ -8,7 +8,7 @@ function nowPlayingListener(){
 			setActiveSong(data.position);
 		}
 
-		console.log(data);
+		//console.log(data);
 		updateSongProgressTime(data.progress.perc);
 		currentsong = data;
 		$('.marquee').text(data.artist+' :: '+data.album+' :: '+data.title);
@@ -19,6 +19,43 @@ function nowPlayingListener(){
 
 
 io.emit('playlist:current');
+
+io.on('cover404', function(data){
+		var html = '<div class="row"> <form class="col s12">';
+		data.forEach(function(v,i){
+      html+='<div class="row">'+
+        '<div class="input-field col s4">'+
+        '  <input id="coverArt'+i+'" type="text" value="'+ v.artist +'" class="validate">'+
+        '</div>'+
+        '<div class="input-field col s6">'+
+        '  <input id="coverAlb'+i+'" type="text" value="'+ v.album +'" class="validate">'+
+       ' </div>'+
+       '<div class="coverDown input-field col s1">'+
+					'<a id="coverDown'+i+'" class="waves-effect waves-light btn blue"><i class="mdi mdi-cloud-download"></i></a>' +
+			'</div>'+
+       '<div class="input-field col s1">'+
+			'</div>'+
+      '</div>'+
+      '</form>'+
+      '</div>'
+		});
+
+
+		$("#modal1 .modal-content").append(html);
+
+		$('.coverDown a').click(function(){
+			var id = parseInt($(this).attr('id').replace(/\D/g,''));
+		  var req = {
+				artist:  $("#coverArt"+id).attr('value'),
+				album: $("#coverAlb"+id).attr('value'),
+				file:  data[id].file
+			};
+
+			io.emit('playlist:albumcover', req);
+			
+		});
+
+});
 
 io.on('cover', function(stream){
 	if (stream.id){
@@ -51,10 +88,13 @@ io.on('playlist:current', function(songs){
 			text+= '<strong class="playls_time">'+s.duration+'</strong>';
 
 			cls = "collection-item";
-			if (idalbum != s.album.replace(/\s/g, '')){
-				idalbum = s.album.replace(/\s/g, '');
+			if (idalbum != s.album.replace(/\W/g, '')){
+				idalbum = s.album.replace(/\W/g, '');
 
-				io.emit('playlist:albumcover',{ fromPlaylist: true, file: s.file, id: idalbum });
+				s.id = idalbum;
+				s.fromPlaylist = true;
+
+				io.emit('playlist:albumcover', s);
 
 				$('.collection').append(
 						'<div class="row header-album">'+
@@ -71,11 +111,14 @@ io.on('playlist:current', function(songs){
 
 			$('.collection').append('<a id="song_'+i+'" href="#!" class="'+cls+'">'+ text +'</a>');
 		});
+
+		io.emit('player:cover404');
 	}
 
 	$('.collection a').click(function(){
 		var id = $(this).attr('id').split('_')[1];
 		runWithArgs('player:play',id);
+		setActiveSong(id);
 	});
 
 });
@@ -135,7 +178,10 @@ function runWithArgs(action,args){
 	io.emit(action,args);
 }
 
-
 $('.uploadbutton a').click(function(){
 	$(this).parent().find('input').click();
+});
+
+$('#cover404').click(function(){
+  $('#modal1').openModal();
 });

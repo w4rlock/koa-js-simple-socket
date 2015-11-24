@@ -17,6 +17,7 @@ let _socket = null;
 let Playlists = {};
 let MPlayer = {};
 let Volumen = {};
+let cover404 = new Map();
 
 let _listeners = {
 	volumen: Volumen,
@@ -30,6 +31,14 @@ MPlayer.next = () => run('next');
 MPlayer.pause = () => run('pause');
 MPlayer.nowplaying = nowplaying;
 MPlayer.play = play;
+MPlayer.cover404 = () => {
+	console.log(cover404);
+	
+	let res = [];
+	cover404.forEach((k, v) => res.push(k));
+
+	_socket.emit('cover404', res);
+};
 
 // +5, -5, 60 in perc 60
 Volumen.set = (perc) => run(['volume', perc]);
@@ -162,16 +171,24 @@ function nowplaying(){
 	 });
 }
 
+
 function sendCover(_current){
 	 getCovers(_current).then((res) => {
-			log('Sending stream cover ', res[0]);
 
 			 fs.readFile(res[0], (err, buf) => {
-				 if (buf){
-					 if (_current.fromPlaylist)
-						 _socket.emit('cover', { buffer: buf.toString('base64'), id: _current.id });
-					 else
-						 _socket.allEmit('cover', { buffer: buf.toString('base64') });
+				 if (!buf){
+         	if (_current.fromPlaylist){
+						cover404.set(_current.id, _current);
+					}	
+					return;
+				 }
+
+				 log('Sending stream cover ', res[0]);
+				 if (_current.fromPlaylist){
+					 _socket.emit('cover', { buffer: buf.toString('base64'), id: _current.id });
+				 }
+				 else{
+					 _socket.allEmit('cover', { buffer: buf.toString('base64') });
 				 }
 
 			 });
@@ -180,10 +197,16 @@ function sendCover(_current){
 }
 
 
+
 function getCovers(_song){
 	 return new Promise((res, err) => {
+
 		 let dir = MDIR + path.dirname(_song.file) + '/';
 		 let file = dir + 'front_thumb.png';
+
+				res([file]);
+				return;
+
 
 		 log('Searching covers ', dir);
 		 if (!fs.existsSync(file) && !_song.fromPlaylist){
@@ -200,6 +223,7 @@ function getCovers(_song){
 			 crawl.getFrontBack(s, dir)
 			  .then(nutil.thumbnails)
 				.then(res, err);
+
 			}
 			else{
 				res([file]);
@@ -235,7 +259,7 @@ function playlist_get(){
 					 artist: data[0],
 						album: data[1],
 						title: data[2],
-						 year: data[3],
+						 year: data[3].substr(0,4),
 				 duration: data[4],
 						 file: data[5]
 				 };
