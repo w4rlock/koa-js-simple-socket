@@ -21,33 +21,37 @@ function nowPlayingListener(){
 io.emit('playlist:current');
 
 io.on('cover404', function(data){
-		var html = '<div class="row"> <form class="col s12">';
+		var html = '<div class="row"> <form id="mform" class="col s12"> </form> </div>';
+		$("#modal1 .modal-content").append(html);
+
 		data.forEach(function(v,i){
-      html+='<div class="row">'+
+      html='<div class="row">'+
         '<div class="input-field col s4">'+
-        '  <input id="coverArt'+i+'" type="text" value="'+ v.artist +'" class="validate">'+
+        '  <input class="validate" type="text" id="coverArt'+i+'">'+
         '</div>'+
         '<div class="input-field col s6">'+
-        '  <input id="coverAlb'+i+'" type="text" value="'+ v.album +'" class="validate">'+
+        '  <input class="validate" type="text" id="coverAlb'+i+'">'+
        ' </div>'+
        '<div class="coverDown input-field col s1">'+
 					'<a id="coverDown'+i+'" class="waves-effect waves-light btn blue"><i class="mdi mdi-cloud-download"></i></a>' +
-			'</div>'+
-       '<div class="input-field col s1">'+
-			'</div>'+
+				'</div>'+
       '</div>'+
       '</form>'+
       '</div>'
+
+			$("#mform").append(html);
+
+			$('#coverArt'+i).val(v.artist);
+			$('#coverAlb'+i).val(v.album);
 		});
 
 
-		$("#modal1 .modal-content").append(html);
 
 		$('.coverDown a').click(function(){
 			var id = parseInt($(this).attr('id').replace(/\D/g,''));
 		  var req = {
-				artist:  $("#coverArt"+id).attr('value'),
-				album: $("#coverAlb"+id).attr('value'),
+				artist:  $("#coverArt"+id).val(),
+				album: $("#coverAlb"+id).val(),
 				file:  data[id].file
 			};
 
@@ -181,6 +185,7 @@ $('.uploadbutton a').click(function(){
 });
 
 $('#cover404').click(function(){
-  io.emit('player:cover404');
+	if ($('#mform').length == 0)
+		io.emit('player:cover404');
   $('#modal1').openModal();
 });

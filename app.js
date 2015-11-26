@@ -22,14 +22,6 @@ api.get('/test', function*(){
 	
 });
 
-api.get('/download', function*(){
-	//crawl.getAllCovers('w.a.s.p. the last command', (err, res) => {
-		//if (err) log(err);
-		//log(res);
-	//});
-});
-
-
 app.use(serve(__dirname + '/public'));
 app.use(logger());
 app.use(api.routes())
@@ -46,7 +38,6 @@ io.on('connection', (socket) => {
   socket.emitStream = ss(socket).emit; 
 
   mplayer.listen(socket);
-  //require('./auth').listen(socket);
 
   ss(socket).on('upload', mplayer.upload);
 

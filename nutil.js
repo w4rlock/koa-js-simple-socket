@@ -1,7 +1,7 @@
 'use strict';
 
 const TMP_DIR = '/tmp/';
-const MUSIC_DIR = '/home/ensiferum/Music/';
+const MUSIC_DIR = '/server/media/music/';
 
 let fs = require('fs');
 let spawn = require('child_process').spawn;
@@ -75,20 +75,19 @@ Util.thumbnail = (img) => {
 
 Util.download = (url, out) => {
 	return new Promise((res, rej) => {
-		log('wget downloading %s::%s ',url, out);
 
-		spawn('wget', [url, '-O', out]).on('exit', status => {
-			log('wget download status', status);
+		let proc = spawn('wget', [url, '-O', out]);
 
-			if (status == 0){
+		//proc.stdout.on('data', data => log(data.toString()));
+		//proc.stderr.on('data', data => log(data.toString()));
+
+		proc.on('close', (code) => {
+			if (code == 0){
 				log('wget download done:: ', out);
 				res(out);
 				return;
 			}
-			else{
-				rej('error downloading');
-			}
-
+			rej('error downloading');
 		});
 
 	});
@@ -133,13 +132,8 @@ Util.extractpkg = (file) => {
 
 
 			let proc = spawn(cmd, args);
-			proc.stdout.on('data', (data) => {
-				log('stdout: ' + data);
-			});
-
-			proc.stderr.on('data', (data) => {
-				log('stderr: ' + data);
-			});
+			proc.stdout.on('data', data => log(data.toString()));
+			proc.stderr.on('data', data => log(data.toString()));
 
 			proc.on('close', (code) => {
 				log('child process exited with code ' + code);
