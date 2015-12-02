@@ -2,7 +2,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.1/css/materialize.min.css">
 <link href="bower_components/mdi/css/materialdesignicons.min.css" media="all" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Play">
-<link href="css/jquery.circliful.css" rel="stylesheet" type="text/css" />
+<link href="css/main.css" rel="stylesheet" type="text/css" />
 <style>
 body{
 background-image: url('img/gib1.png');
@@ -45,18 +45,18 @@ font-family: Play;
 color: #CACACA;
 }
 
-	.collection a.collection-item {
+.collection a.collection-item {
 color: #808080;
 font-size: 13px !important;
 font-family: Play;
 	}
 
-	.collection .collection-item {
+.collection .collection-item {
 border-bottom: 1px solid #26a69a;
 background-color: rgba(0, 0, 0, 0.21);
 padding: 7px 20px;
 border: 0px;
-	}
+}
 
 
 .playlist{
@@ -205,6 +205,15 @@ margin: 5;
 
 </style>
 <body ng-controller="MainCtrl">
+
+	<div id="loader-wrapper">
+		<div id="loader"></div>
+
+		<div class="loader-section section-left"></div>
+		<div class="loader-section section-right"></div>
+
+	</div>
+
 	<div id="loadingbar" class="progress">
 		<div class="determinate" style="width: 1%"></div>
 	</div>
@@ -285,6 +294,11 @@ margin: 5;
 				$('body').css('background-image','url(img/gib'+num+'.png)');
 
 		},25000);
+
+		setTimeout(function(){
+        $('body').addClass('loaded');
+        $('h1').css('color','#222222');
+    }, 3000);
 
 	</script>
 </body>
