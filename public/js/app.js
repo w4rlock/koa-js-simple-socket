@@ -62,8 +62,9 @@ io.on('cover404', function(data){
 });
 
 io.on('cover', function(stream){
-        var source ='data:image/jpg;base64,' + stream.buffer;
+  var source ='data:image/jpg;base64,' + stream.buffer;
 	var element = '#' + (stream.id || 'cover')
+	console.log(element);
 	$(element).attr('src',source );
         //$('.movecover').append('<img class="fumada" src="'+source+'">');
 
@@ -94,7 +95,7 @@ io.on('playlist:current', function(songs){
 			if (idalbum != s.album.replace(/\W/g, '')){
 				idalbum = s.album.replace(/\W/g, '');
 
-				s.id = idalbum;
+				s.id = idalbum || ('img'+ new Date().valueOf());
 				s.fromPlaylist = true;
 
 				io.emit('playlist:albumcover', s);

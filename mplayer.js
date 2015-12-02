@@ -20,6 +20,7 @@ let Playlists = {};
 let MPlayer = {};
 let Volumen = {};
 let cover404 = new Map();
+let redis = null;
 
 let _listeners = {
   volumen: Volumen,
@@ -55,32 +56,37 @@ Playlists.search = search;
  * socket - listening mplayer methods.
  *
  */
-module.exports = exports = {
+module.exports = exports = (_redis) => {
+	redis = _redis;
 
-	upload: (stream, data) => {
-		nutil.upload(stream, data)
-		.then(playlist_get);
-	},
+	
+	return  {
 
-	listen: (socket) => {
-		_socket = socket;
+			upload: (stream, data) => {
+				nutil.upload(stream, data)
+					.then(playlist_get);
+			},
 
-		if (_timerNowPlaying == null)
-			_timerNowPlaying = setInterval(nowplaying, 2200);
+			listen: (socket) => {
+				_socket = socket;
 
-		if (_currentPlay){
-			sendCover(_currentPlay);
-		}
+				if (_timerNowPlaying == null)
+					_timerNowPlaying = setInterval(nowplaying, 2200);
 
-		for (let obj in _listeners){
-			for (let method in _listeners[obj]) {
-				let skey = obj +':'+ method;
+				if (_currentPlay){
+					sendCover(_currentPlay);
+				}
 
-				socket.on(skey, _listeners[obj][method]);
-				log(skey);
+				for (let obj in _listeners){
+					for (let method in _listeners[obj]) {
+						let skey = obj +':'+ method;
 
+						socket.on(skey, _listeners[obj][method]);
+						log(skey);
+
+					}
+				}
 			}
-		}
 	}
 }
 
@@ -160,6 +166,7 @@ function nowplaying(){
 						 progress: { time: ptime, perc: pperc }
 				 };
 
+				 // when album changed, notify
 				 if (_currentPlay == null || _currentPlay.album != _current.album){
 					 _currentPlay = _current;
 					 sendCover(_current);
@@ -177,8 +184,6 @@ function nowplaying(){
 
 function sendCover(_current){
 	 getCovers(_current).then((res) => {
-
-			 log(res[0])
 			 fs.readFile(res[0], (err, buf) => {
 
 				 // NOTIFICO COVERS 404
@@ -189,7 +194,7 @@ function sendCover(_current){
 						return;
 				 }
 
-				 log('Sending stream cover ', res[0]);
+				 //log('Sending stream cover ', res[0]);
 				 if (_current.fromPlaylist){
 					 _socket.emit('cover', { buffer: buf.toString('base64'), id: _current.id });
 				 }
@@ -210,7 +215,6 @@ function getCovers(_song){
 		 let dir = MDIR + path.dirname(_song.file) + '/';
 		 let file = dir + 'front_thumb.png';
 
-		 log('Searching covers ', dir);
 		 if (!fs.existsSync(file) && !_song.fromPlaylist){
 			 let s = `${_song.artist} ${_song.album}`;
 
@@ -270,10 +274,11 @@ function search(f){
 }
 
 
-function parsePlaylist(raw){
+function parsePlaylist(raw, i){
    let data = raw.split(':$:');
 
-   return {
+	 let song = 
+   {
       artist: data[0] || path.dirname(data[5]).split('/')[0],
        title: data[2] || path.basename(data[5]).replace(/\.\w{3,}$/g,''),
        album: data[1], 
@@ -281,4 +286,9 @@ function parsePlaylist(raw){
     duration: data[4],
         file: data[5]
   };
+
+
+	redis.rpush('song:'+i, song);
+	return song;
+
 }

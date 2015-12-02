@@ -256,7 +256,6 @@ margin: 5;
 	<script src="socket.io-stream.js"></script>
 	<script src="js/app.js"> </script>
 	<script src="js/detectmobilebrowser.js"></script>
-	<script src="js/jquery.circliful.js"></script>
 	<script>
 		if ($.browser.mobile){
 			$('.player').css('width','100%');
@@ -264,6 +263,16 @@ margin: 5;
 
 			$('#cover').css('width','70%');
 			$('#cover').css('height','45%');
+
+			$('.btn-floating.btn-large i').css('line-height', '85.5px');
+			$('.btn-large i').css('font-size', '3.6rem');
+			$('.actions').css('margin', '40');
+			$('.btn-action').css('margin', '6px');
+
+			$('.btn-floating.btn-large').css('width', '85.5px');
+			$('.btn-floating.btn-large').css('height', '85.5px');
+			$('.btn-action').css('border', '1px solid white');
+			$('.sprogress').css('height', '9px');
 		}
 		else{
 			$('.player').css('margin','10 0 20 20');
